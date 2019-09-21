@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <script src="three.js"></script>
+        <script src="jquery.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="bootstrap.min.css">
+        <script type="text/javascript">
+            $(window).load(function(){
+
+
+function sceneTwoBarnsRotated () {
+    var scene = new THREE.Scene();
+    var redbarn = THREE.createBarnSolidColor(1,1,1,"red");
+    var greenbarn = THREE.createBarnSolidColor(1,1,1,"green");
+    greenbarn.position.set(2,0,-1);
+    greenbarn.rotation.set(0,Math.PI/6,0);   // pi/6 = 30 degrees rotation
+    scene.add(redbarn);
+    scene.add(greenbarn);
+    var renderer = new THREE.WebGLRenderer();
+    THREE.mainInit(renderer,scene);
+    THREE.cameraSetup(renderer,
+                   scene,
+                   {minx: 0, maxx: 2,
+                    miny: 0, maxy: 1,
+                    minz: -1, maxz: 1});
+    THREE.toggleAxes("show");
+}   
+
+sceneTwoBarnsRotated();
+
+
+            });
+        </script>
+    </head>
+    <body>
+        <div style="height: 600px;" class="col-sm-6">
+            <textarea style="height: 100%; resize: none;" placeholder="Codigo" class="form-control"></textarea>
+        </div>
+        <div style="height: 600px;" class="col-sm-6 text-center">
+            <canvas width="500" height="600" id="canvas_render"></canvas>
+        </div>
+    </body>
+</html>

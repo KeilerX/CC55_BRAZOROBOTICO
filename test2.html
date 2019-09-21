@@ -11,6 +11,7 @@
 			var objRend;
 			var render;
 			var listElm=[];
+			var listGru=[];
 
 			function drawXYZ(x,y,z,w,c){
 				var rvec=10;
@@ -30,7 +31,7 @@
 				scene.add(lin2);
 				scene.add(lin3);
 			}
-			function addCylinder(x,y,z,rx,ry,rz,w,h,d,son){
+			function addCylinder(x,y,z,rx,ry,rz,w,h,d,son,father){
 				//objeto base
 				var geom_base = new THREE.BoxGeometry(w,h,d);
 				var mate_base = new THREE.MeshBasicMaterial( {color: "rgb(168,168,168)"} );
@@ -55,11 +56,31 @@
 				scene.add(cubo_base);
 				listElm.push({
 					son:son,
+					father:father,
 					data:cubo_base,
 					line:line,
 					rota_z:function(d){
 						this.data.rotation.z+=d;
 						this.line.rotation.z+=d;
+						//haciendo rotacion de hijos
+						var idSon=this.son;
+						var tmpOb;
+						while( idSon>0 ){
+							//console.log(idSon);
+							tmpOb=listElm[idSon];
+							idSon=tmpOb.son;
+						}
+					},
+					//x' = xcos(alpha) - ysen(alpha)
+					//y' = xsen(alpha) + ycos(alpha)
+					rota_giro:function(d){
+						this.data.rotateOnAxis(new THREE.Vector3( 0, 1, 0 ), d);
+						var tmpx=this.data.position.x;
+						var tmpz=this.data.position.z-10;
+						//this.data.position.x=tmpx*Math.cos(d)-tmpy*Math.sin(d);
+						//this.data.position.y=tmpx*Math.sin(d)-tmpx*Math.cos(d);
+						this.data.position.x=tmpx*Math.cos(d)-tmpz*Math.sin(d);
+						this.data.position.z=tmpx*Math.sin(d)+tmpz*Math.cos(d)+10;
 					}
 				});
 			}
@@ -79,12 +100,67 @@
 				camera.lookAt(0,0,5);
 				camera.rotation.z = 2.62;
 				/*creando elementos base del brazo*/
-				addCylinder(0,0,2,0,0,0,2,2,4,-1);
-				addCylinder(0,0,6,0,0,0,1,1,4,2);
-				addCylinder(0,0,11,0,0,0,1,2,6,3);
+				addCylinder(0,0,2,0,0,0,3,3,4,0,0);
+				addCylinder(0,0,6,0,0,0,2.5,2.5,4,0,0);
+				addCylinder(0,0,11,0,0,0,2,2,6,0,0);
+				addCylinder(0,0,14.5,0,0,0,1.5,1.5,1,0,0);
+				addCylinder(0,0,16,0,0,0,1,1,2,0,0);
+				addCylinder(0,0,17.5,0,0,0,0.5,0.5,1,0,0);
+				addCylinder(0,0,18.5,0,0,0,0.2,0.2,1,0,0);
+
+
+
+				var grup0=new THREE.Group();
+				var grup1=new THREE.Group();
+				var grup2=new THREE.Group();
+				var grup3=new THREE.Group();
+				var grup4=new THREE.Group();
+				var grup5=new THREE.Group();
+				scene.add(grup0);
+				scene.add(grup1);
+				scene.add(grup2);
+				scene.add(grup3);
+				scene.add(grup4);
+				scene.add(grup5);
+
+
+
+				grup0.add(listElm[6].data);
+				//listGru.push({tip_rot:0,data:grup0});
+
+				grup1.add(listElm[5].data);
+				grup1.add(grup0);
+				//listGru.push({tip_rot:0,data:grup1});
+
+				grup2.add(listElm[4].data);
+				grup2.add(grup1);
+				//listGru.push({tip_rot:0,data:grup2});
+
+				grup3.add(listElm[3].data);
+				grup3.add(grup2);
+				listGru.push({tip_rot:0,data:grup3});
+
+				grup4.add(listElm[2].data);
+				grup4.add(grup3);
+				listGru.push({tip_rot:0,data:grup4});
+
+				grup5.add(listElm[1].data);
+				grup5.add(grup4);
+				listGru.push({tip_rot:0,data:grup5});
+
+
+				
+				scene.add(grup1);
+				scene.add(grup2);
+				scene.add(grup3);
+				scene.add(grup4);
+				scene.add(grup5);
+
 				drawXYZ(0,0,0);
 
 
+
+				
 
 				
 
@@ -105,6 +181,15 @@
 				$(document).on("keydown", function(e){
 					console.log(e.keyCode);
 					var curElm=1;
+
+					if(e.keyCode==37){
+						grup2.rotation.z+=0.1;
+					}
+					else if(e.keyCode==39){
+						grup2.rotation.z-=0.1;	
+					}
+
+					/*
 					//evento de rotar en eje z
 					if(e.keyCode==37){
 						listElm[curElm].rota_z(-0.1);
@@ -114,14 +199,24 @@
 					}
 
 					//zoom de prueba
-					else if(e.keyCode==35){
+					else if(e.keyCode==97){
 						camera.fov+=0.5;
 						camera.updateProjectionMatrix();
 					}
-					else if(e.keyCode==40){
+					else if(e.keyCode==98){
 						camera.fov-=0.5;
 						camera.updateProjectionMatrix();
 					}
+
+					//prueba de eje
+					curElm=2;
+					if(e.keyCode==38){
+						listElm[curElm].rota_giro(-0.1);
+					}
+					else if(e.keyCode==40){
+						listElm[curElm].rota_giro(+0.1);
+					}
+					*/
 
 
 
