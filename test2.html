@@ -10,7 +10,7 @@
 			var scene;
 			var objRend;
 			var render;
-			var curGru=0;
+			var curGru=5;
 			var listElm=[];
 			var listGru=[];
 			var listPiv={};
@@ -94,7 +94,10 @@
 					}*/
 				});
 			}
-
+			function roundn(n,d){
+				var p=Math.pow(10,d);
+				return Math.round(n*p)/p;
+			}
 
 			var pivot;
 			$(window).load(function(){
@@ -285,6 +288,22 @@
 					curGru=$(this).val();
 				});
 
+				$(document).on("click", ".lstBtn", function(){
+					$(".lstBtn").removeClass("curBtn");
+					$(".lstBtn").removeClass("btn-primary");
+					$(this).addClass("curBtn");
+					$(this).addClass("btn-primary");
+					curGru=$(this).attr("inf");
+				});
+
+				$(document).on("click", "#btnAdd", function(){
+					var tmp=listElm[6].data.localToWorld( new THREE.Vector3(0,0,0) );
+					var x=roundn(tmp.x,2);
+					var y=roundn(tmp.y,2);
+					var z=roundn(tmp.z,2);
+					$("#txtCod").val( $("#txtCod").val()+"MOVETO("+x+","+y+","+z+")\n" );
+				});
+
 				/*
 				var objRend=document.getElementById("canvas_render");
 				var scene = new THREE.Scene();
@@ -303,21 +322,19 @@
 	</head>
 	<body>
 		<div style="height: 600px;" class="col-sm-6">
-			<textarea style="height: 100%; resize: none;" placeholder="Codigo" class="form-control"></textarea>
+			<textarea style="height: 100%; resize: none;" id="txtCod" placeholder="Codigo" class="form-control"></textarea>
 		</div>
 		<div style="height: 600px;" class="col-sm-6 text-center">
 			<canvas width="500" height="600" id="canvas_render"></canvas>
 		</div>
-		<div class="col-sm-4">
-			<label>Grupo:</label>
-			<select class="form-control input-sm" id="listGru">
-				<option value="0">0</option>
-				<option value="1">1</option>
-				<option value="2">2</option>
-				<option value="3">3</option>
-				<option value="4">4</option>
-				<option value="5">5</option>
-			</select>
+		<div style="margin-top: 10px;" class="col-sm-12">
+			<button class="btn lstBtn btn-sm" inf="0">Bloque 0</button>
+			<button class="btn lstBtn btn-sm" inf="1">Bloque 1</button>
+			<button class="btn lstBtn btn-sm" inf="2">Bloque 2</button>
+			<button class="btn lstBtn btn-sm" inf="3">Bloque 3</button>
+			<button class="btn lstBtn btn-sm" inf="4">Bloque 4</button>
+			<button class="btn lstBtn btn-sm btn-primary curBtn" inf="5">Bloque 5</button>
+			<button id="btnAdd" class="btn btn-sm btn-success">Agregar</button>
 		</div>
 	</body>
 </html>
