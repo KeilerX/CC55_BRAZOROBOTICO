@@ -10,9 +10,10 @@
 			var scene;
 			var objRend;
 			var render;
+			var curGru=0;
 			var listElm=[];
 			var listGru=[];
-
+			
 			function drawXYZ(x,y,z,w,c){
 				var rvec=10;
 				var mat1=new THREE.LineBasicMaterial({color:"rgb(255,0,0)"}); //x
@@ -31,10 +32,16 @@
 				scene.add(lin2);
 				scene.add(lin3);
 			}
+			function getRandomColor(){
+				var n1=Math.round(Math.random()*255);
+				var n2=Math.round(Math.random()*255);
+				var n3=Math.round(Math.random()*255);
+				return "rgb("+n1+","+n2+","+n3+")";
+			}
 			function addCylinder(x,y,z,rx,ry,rz,w,h,d,son,father){
 				//objeto base
 				var geom_base = new THREE.BoxGeometry(w,h,d);
-				var mate_base = new THREE.MeshBasicMaterial( {color: "rgb(168,168,168)"} );
+				var mate_base = new THREE.MeshBasicMaterial( {color: getRandomColor()} );
 				var cubo_base = new THREE.Mesh( geom_base, mate_base )
 				cubo_base.position.x = x;
 				cubo_base.position.y = y;
@@ -43,6 +50,7 @@
 				cubo_base.rotation.y = ry;
 				cubo_base.rotation.z = rz;
 				//bordes de la geometria
+				/*
 				var edges = new THREE.EdgesGeometry( geom_base );
 				var line  = new THREE.LineSegments(edges, new THREE.LineBasicMaterial( { color: "rgb(255,255,0)" } ));
 				line.position.x = x;
@@ -50,15 +58,16 @@
 				line.position.z = z;
 				line.rotation.x = rx;
 				line.rotation.y = ry;
-				line.rotation.z = rz;
+				line.rotation.z = rz;*/
 				//agregando al render
-				scene.add(line);
-				scene.add(cubo_base);
+				//scene.add(line);
+				if( listElm.length==0 )
+					scene.add(cubo_base);
 				listElm.push({
 					son:son,
 					father:father,
 					data:cubo_base,
-					line:line,
+					/*
 					rota_z:function(d){
 						this.data.rotation.z+=d;
 						this.line.rotation.z+=d;
@@ -81,7 +90,7 @@
 						//this.data.position.y=tmpx*Math.sin(d)-tmpx*Math.cos(d);
 						this.data.position.x=tmpx*Math.cos(d)-tmpz*Math.sin(d);
 						this.data.position.z=tmpx*Math.sin(d)+tmpz*Math.cos(d)+10;
-					}
+					}*/
 				});
 			}
 
@@ -99,94 +108,81 @@
 				camera.position.y = 15;
 				camera.lookAt(0,0,5);
 				camera.rotation.z = 2.62;
+
+
 				/*creando elementos base del brazo*/
-				addCylinder(0,0,2,0,0,0,3,3,4,0,0);
-				addCylinder(0,0,6,0,0,0,2.5,2.5,4,0,0);
-				addCylinder(0,0,11,0,0,0,2,2,6,0,0);
-				addCylinder(0,0,14.5,0,0,0,1.5,1.5,1,0,0);
+				addCylinder(0,0,2,0,0,0,1,1,4,0,0);
+				addCylinder(0,0,6,0,0,0,1,1,4,0,0);
+				addCylinder(0,0,11,0,0,0,1,1,6,0,0);
+				addCylinder(0,0,14.5,0,0,0,1,1,1,0,0);
 				addCylinder(0,0,16,0,0,0,1,1,2,0,0);
-				addCylinder(0,0,17.5,0,0,0,0.5,0.5,1,0,0);
-				addCylinder(0,0,18.5,0,0,0,0.2,0.2,1,0,0);
-
-
-
-				var grup0=new THREE.Group();
-				var grup1=new THREE.Group();
-				var grup2=new THREE.Group();
-				var grup3=new THREE.Group();
-				var grup4=new THREE.Group();
+				addCylinder(0,0,17.5,0,0,0,1,1,1,0,0);
+				addCylinder(0,0,18.5,0,0,0,1,1,1,0,0);
+				
 				var grup5=new THREE.Group();
-				scene.add(grup0);
-				scene.add(grup1);
-				scene.add(grup2);
-				scene.add(grup3);
-				scene.add(grup4);
+				var grup4=new THREE.Group();
+				var grup3=new THREE.Group();
+				var grup2=new THREE.Group();
+				var grup1=new THREE.Group();
+				var grup0=new THREE.Group();
 				scene.add(grup5);
-
+				scene.add(grup4);
+				scene.add(grup3);
+				scene.add(grup2);
+				scene.add(grup1);
+				scene.add(grup0);
 
 
 				grup0.add(listElm[6].data);
-				//listGru.push({tip_rot:0,data:grup0});
+				listGru.push({tip_rot:0,data:grup0});
 
 				grup1.add(listElm[5].data);
 				grup1.add(grup0);
-				//listGru.push({tip_rot:0,data:grup1});
+				listGru.push({tip_rot:1,data:grup1});
 
 				grup2.add(listElm[4].data);
 				grup2.add(grup1);
-				//listGru.push({tip_rot:0,data:grup2});
+				listGru.push({tip_rot:0,data:grup2});
 
 				grup3.add(listElm[3].data);
 				grup3.add(grup2);
-				listGru.push({tip_rot:0,data:grup3});
+				listGru.push({tip_rot:1,data:grup3});
 
 				grup4.add(listElm[2].data);
 				grup4.add(grup3);
-				listGru.push({tip_rot:0,data:grup4});
+				listGru.push({tip_rot:1,data:grup4});
 
 				grup5.add(listElm[1].data);
 				grup5.add(grup4);
 				listGru.push({tip_rot:0,data:grup5});
 
 
-				
-				scene.add(grup1);
-				scene.add(grup2);
-				scene.add(grup3);
-				scene.add(grup4);
-				scene.add(grup5);
-
 				drawXYZ(0,0,0);
-
-
-
-				
-
-				
-
 				
 				var animate = function () {
 					requestAnimationFrame( animate );
-					//cylinder.rotation.z+=0.05;
-					//cylinder.rotation.z+=0.1;
-					//cylinder.rotation.z+=0.1;
-					//camera.rotation.y+=0.01;
-					//camera.rotation.z+=0.01;
-					//console.log(camera.rotation.x, camera.rotation.y, camera.rotation.z);
 					render.render( scene, camera );
+					scene.updateWorldMatrix();
 				};
 				animate();
 
-
+				var rad=0;
 				$(document).on("keydown", function(e){
-					console.log(e.keyCode);
-					var curElm=1;
 
 					if(e.keyCode==37){
-						grup2.rotation.z+=0.1;
+						if( listGru[curGru].tip_rot==0 )
+							listGru[curGru].data.rotation.z+=0.1;
+						else{
+							//listGru[curGru].data.rotation.x+=0.1;
+							listGru[curGru].data.
+						}
 					}
 					else if(e.keyCode==39){
-						grup2.rotation.z-=0.1;	
+						if( listGru[curGru].tip_rot==0 )
+							listGru[curGru].data.rotation.z-=0.1;
+						else{
+							//listGru[curGru].data.rotation.x-=0.1;
+						}
 					}
 
 					/*
@@ -236,6 +232,10 @@
 					*/
 				});
 
+				$(document).on("click", "#listGru", function(){
+					curGru=$(this).val();
+				});
+
 				/*
 				var objRend=document.getElementById("canvas_render");
 				var scene = new THREE.Scene();
@@ -258,6 +258,17 @@
 		</div>
 		<div style="height: 600px;" class="col-sm-6 text-center">
 			<canvas width="500" height="600" id="canvas_render"></canvas>
+		</div>
+		<div class="col-sm-4">
+			<label>Grupo:</label>
+			<select class="form-control input-sm" id="listGru">
+				<option value="0">0</option>
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+			</select>
 		</div>
 	</body>
 </html>
