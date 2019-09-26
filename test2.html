@@ -13,6 +13,7 @@
 			var curGru=0;
 			var listElm=[];
 			var listGru=[];
+			var listPiv={};
 			
 			function drawXYZ(x,y,z,w,c){
 				var rvec=10;
@@ -95,7 +96,7 @@
 			}
 
 
-
+			var pivot;
 			$(window).load(function(){
 				//creando objeto base
 				objRend =document.getElementById("canvas_render");
@@ -133,6 +134,11 @@
 				scene.add(grup0);
 
 
+				
+
+
+
+
 				grup0.add(listElm[6].data);
 				listGru.push({tip_rot:0,data:grup0});
 
@@ -157,6 +163,46 @@
 				listGru.push({tip_rot:0,data:grup5});
 
 
+				//prueba pivot 3
+				//pivotPoint = new THREE.Object3D();
+       			//pivotPoint.position.set(0,0,5);
+       			//pivotPoint.add(grup3);
+       			
+
+       			//creando pivotes
+       			pivot4 = new THREE.Group();
+				scene.add( pivot4 );
+				pivot4.add( grup4 );
+				pivot4.position.set(0,0,8);
+				grup4.position.set(0,0,-8);
+				listPiv[4]=pivot4;
+				grup5.add(pivot4);
+
+
+				pivot3 = new THREE.Group();
+				scene.add( pivot3 );
+				pivot3.add( grup3 );
+				pivot3.position.set(0,0,14);
+				grup3.position.set(0,0,-14);
+				listPiv[3]=pivot3;
+				grup4.add(pivot3);
+
+
+				pivot1 = new THREE.Group();
+				scene.add( pivot1 );
+				pivot1.add( grup1 );
+				pivot1.position.set(0,0,17);
+				grup1.position.set(0,0,-17);
+				listPiv[1]=pivot1;
+				grup2.add(pivot1);
+       			
+				
+
+
+
+
+
+
 				drawXYZ(0,0,0);
 				
 				var animate = function () {
@@ -174,13 +220,16 @@
 							listGru[curGru].data.rotation.z+=0.1;
 						else{
 							//listGru[curGru].data.rotation.x+=0.1;
-							listGru[curGru].data.
+							//listGru[curGru].data.rotation.x+=0.1;
+							listPiv[curGru].rotation.x+=0.1;
 						}
 					}
 					else if(e.keyCode==39){
 						if( listGru[curGru].tip_rot==0 )
 							listGru[curGru].data.rotation.z-=0.1;
 						else{
+							listPiv[curGru].rotation.x-=0.1;
+							//listGru[curGru].data.rotation.x-=0.1;
 							//listGru[curGru].data.rotation.x-=0.1;
 						}
 					}
