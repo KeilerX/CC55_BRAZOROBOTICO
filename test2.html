@@ -164,12 +164,6 @@
 				grup5.add(listElm[1].data);
 				grup5.add(grup4);
 				listGru.push({tip_rot:0,data:grup5});
-
-
-				//prueba pivot 3
-				//pivotPoint = new THREE.Object3D();
-       			//pivotPoint.position.set(0,0,5);
-       			//pivotPoint.add(grup3);
        			
 
        			//creando pivotes
@@ -198,6 +192,22 @@
 				grup1.position.set(0,0,-17);
 				listPiv[1]=pivot1;
 				grup2.add(pivot1);
+
+
+				//seteando los limites de movimiento
+				pivot4.ang_ini=Math.PI/6;
+				pivot4.ang_lib=Math.PI/4;
+				pivot4.rotation.x=pivot4.ang_ini;
+
+				pivot3.ang_ini=Math.PI/6;
+				pivot3.ang_lib=Math.PI/4;
+				pivot3.rotation.x=pivot3.ang_ini;
+
+				pivot1.ang_ini=Math.PI/6;
+				pivot1.ang_lib=Math.PI/4;
+				pivot1.rotation.x=pivot1.ang_ini;
+
+
        			
 				
 
@@ -225,6 +235,10 @@
 							//listGru[curGru].data.rotation.x+=0.1;
 							//listGru[curGru].data.rotation.x+=0.1;
 							listPiv[curGru].rotation.x+=0.1;
+							//fix de posicion segun limites
+							if( (listPiv[curGru].rotation.x-listPiv[curGru].ang_ini)>listPiv[curGru].ang_lib ) 
+								listPiv[curGru].rotation.x=listPiv[curGru].ang_ini+listPiv[curGru].ang_lib;
+
 						}
 					}
 					else if(e.keyCode==39){
@@ -232,6 +246,9 @@
 							listGru[curGru].data.rotation.z-=0.1;
 						else{
 							listPiv[curGru].rotation.x-=0.1;
+							if( (listPiv[curGru].ang_ini-listPiv[curGru].rotation.x)>listPiv[curGru].ang_lib ) 
+								listPiv[curGru].rotation.x=listPiv[curGru].ang_ini-listPiv[curGru].ang_lib;
+							//fix de posicion segun limites
 							//listGru[curGru].data.rotation.x-=0.1;
 							//listGru[curGru].data.rotation.x-=0.1;
 						}
