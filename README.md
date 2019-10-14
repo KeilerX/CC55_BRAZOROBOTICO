@@ -1,9 +1,13 @@
-# El archivo que contiene el c骴igo es test2.html
+# El archivo que contiene el c贸digo es test2.html
 
-## Caracter韘ticas de esta versi髇:
+## Caracter铆sticas de esta versi贸n:
 
--Es posible mover cada articulaci髇 a voluntad.El usuario puede seleccionar un bloque (articulaci髇) y con las teclas Left y Right realizar las rotaciones.
+-Es posible mover cada articulaci贸n a voluntad.El usuario puede seleccionar un bloque (articulaci贸n) y con las teclas Left y Right realizar las rotaciones.
 
--Es posible guardar movimientos del brazo en forma de pseudoc骴igo(MOVETO). Al presionar el bot髇 agregar, se agrega al editor de texto un comando MOVETO con las coordenadas en las que se encuentra el extremo del brazo.
+-Es posible guardar movimientos del brazo en forma de pseudoc贸digo(MOVETO). Al presionar el bot贸n agregar, se agrega al editor de texto un comando MOVETO con las coordenadas en las que se encuentra el extremo del brazo.
 
--Se puede visualizar el comportamiento de brazo mec醤ico en su totalidad.
+-Se puede visualizar el comportamiento de brazo mec谩nico en su totalidad.
+
+-Se pueden guardar rutinas de movimiento del brazo (conjunto de movimientos).
+
+-Por medio de comandos de voz, el modelo realiza movimientos.
