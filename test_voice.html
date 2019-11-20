@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script src="jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="bootstrap.min.css">
+	<script type="text/javascript">
+		$(window).load(function(){
+			
+
+			var recognition = new window.webkitSpeechRecognition();
+			recognition.lang = 'es-ES';
+			recognition.onresult=function(e){
+				tmp=e.results;
+				console.log(tmp[0][0].transcript);
+			}
+			recognition.start();
+
+
+		});
+	</script>
+</head>
+<body>
+	<div class="container">
+		<button id="btnIni" class="btn btn-primary">Inicia</button>
+	</div>
+</body>
+</html>

@@ -14,6 +14,31 @@
 			var listElm=[];
 			var listGru=[];
 			var listPiv={};
+			var listCom=[];
+			var curCom=0;
+			var speed=0.1;
+			var movAng;
+			var	movDir;
+			var isFree=true;
+			var conPun=1;
+
+			var lstNom={
+				"quinto" :5,
+				"cuarto" :4,
+				"tercer" :3,
+				"segundo":2,
+				"primer" :1
+			};
+			var lstDir={
+				"derecha": 1,
+				"derecho": 1,
+				"izquierda": 0,
+				"izquierdo": 0
+			};
+
+			function sleep(ms) {
+				return new Promise(resolve => setTimeout(resolve, ms));
+			}
 			
 			function drawXYZ(x,y,z,w,c){
 				var rvec=10;
@@ -99,6 +124,68 @@
 				return Math.round(n*p)/p;
 			}
 
+			function runComands(){
+				if( curCom>=listCom.length || listCom.length==0 ){
+					listCom=[];
+					return;
+				}
+				if( !isFree ){
+					setTimeout(runComands,100);
+					return;
+				}
+				var tmp=listCom[curCom].toLowerCase().split(" ");
+				if(tmp[0]=="girar"){
+					curGru=lstNom[tmp[1]];
+					movAng=parseInt(tmp[3])*(Math.PI/180);
+					movDir=lstDir[tmp[5]];
+					console.log("Inicio!");
+					isFree=false;
+					runRotate();	
+				}
+				curCom++;
+				setTimeout(runComands,100);
+			}
+			
+			function runRotate(){
+				if( movAng<=0 ){
+					console.log("Fin!");
+					isFree=true;
+					addPoint();
+					return;
+				}
+				if(movDir==0){
+					if( listGru[curGru].tip_rot==0 )
+						listGru[curGru].data.rotation.z+=speed;
+					else{
+						listPiv[curGru].rotation.x+=speed;
+						if( (listPiv[curGru].rotation.x-listPiv[curGru].ang_ini)>listPiv[curGru].ang_lib ) 
+							listPiv[curGru].rotation.x=listPiv[curGru].ang_ini+listPiv[curGru].ang_lib;
+
+					}
+				}
+				else if(movDir==1){
+					if( listGru[curGru].tip_rot==0 )
+						listGru[curGru].data.rotation.z-=speed;
+					else{
+						listPiv[curGru].rotation.x-=speed;
+						if( (listPiv[curGru].ang_ini-listPiv[curGru].rotation.x)>listPiv[curGru].ang_lib ) 
+							listPiv[curGru].rotation.x=listPiv[curGru].ang_ini-listPiv[curGru].ang_lib;
+					}
+				}
+				movAng-=speed;
+				setTimeout(runRotate, 100);
+			}
+
+			function addPoint(){
+				var tmp=listElm[5].data.localToWorld( new THREE.Vector3(0,0,0) );
+				var x=roundn(tmp.x,2);
+				var y=roundn(tmp.y,2);
+				var z=roundn(tmp.z,2);
+				var newTxt="DEF POS P"+conPun+"\nP"+conPun+"=("+x+","+y+","+z+",-180.00,0.00,180.00)(7,0)\nMOV P"+conPun+"\n";
+				$("#txtCod").val( $("#txtCod").val()+newTxt );
+				conPun++;
+			}
+
 			var pivot;
 			$(window).load(function(){
 				//creando objeto base
@@ -107,21 +194,40 @@
 				camera  =new THREE.PerspectiveCamera(90, objRend.width/objRend.height, 0.1, 1000);
 				render  =new THREE.WebGLRenderer({canvas:objRend});
 				//ajustando la posicion de la camara
-				camera.position.z = 15;
-				camera.position.x = 15;
-				camera.position.y = 15;
-				camera.lookAt(0,0,5);
+				camera.position.z = 580;
+				camera.position.x = 580;
+				camera.position.y = 580;
+				camera.lookAt(0,0,50);
 				camera.rotation.z = 2.62;
 
 
+				var lstTam=[147.5,147.5,230,76.6,193.4,70,70];
+				//var lstTam=[4,4,10,1,2,1,1];
+				var acmTot=0;
+				for(var i=0;i<lstTam.length;i++){
+					var cen=(Math.round((lstTam[i]/2+acmTot)*100))/100;
+					addCylinder(0,0,cen   ,0,0,0,25,25,lstTam[i],0,0);
+					//console.log(cen);
+					acmTot+=lstTam[i];
+				}
+
+				var tpv1=lstTam[0]+lstTam[1];
+				var tpv2=tpv1+lstTam[2];
+				var tpv3=tpv2+lstTam[3]+lstTam[4];
+				console.log(tpv1,tpv2,tpv3)
+
+
+
+
+
 				/*creando elementos base del brazo*/
-				addCylinder(0,0,2,0,0,0,1,1,4,0,0);
-				addCylinder(0,0,6,0,0,0,1,1,4,0,0);
-				addCylinder(0,0,11,0,0,0,1,1,6,0,0);
-				addCylinder(0,0,14.5,0,0,0,1,1,1,0,0);
-				addCylinder(0,0,16,0,0,0,1,1,2,0,0);
-				addCylinder(0,0,17.5,0,0,0,1,1,1,0,0);
-				addCylinder(0,0,18.5,0,0,0,1,1,1,0,0);
+				//addCylinder(0,0,2   ,0,0,0,1,1,4,0,0);
+				//addCylinder(0,0,6   ,0,0,0,1,1,4,0,0);
+				//addCylinder(0,0,11  ,0,0,0,1,1,6,0,0);
+				//addCylinder(0,0,14.5,0,0,0,1,1,1,0,0);
+				//addCylinder(0,0,16  ,0,0,0,1,1,2,0,0);
+				//addCylinder(0,0,17.5,0,0,0,1,1,1,0,0);
+				//addCylinder(0,0,18.5,0,0,0,1,1,1,0,0);
 				
 				var grup5=new THREE.Group();
 				var grup4=new THREE.Group();
@@ -135,11 +241,6 @@
 				scene.add(grup2);
 				scene.add(grup1);
 				scene.add(grup0);
-
-
-				
-
-
 
 
 				grup0.add(listElm[6].data);
@@ -170,8 +271,8 @@
        			pivot4 = new THREE.Group();
 				scene.add( pivot4 );
 				pivot4.add( grup4 );
-				pivot4.position.set(0,0,8);
-				grup4.position.set(0,0,-8);
+				pivot4.position.set(0,0,tpv1);
+				grup4.position.set(0,0,tpv1*-1);
 				listPiv[4]=pivot4;
 				grup5.add(pivot4);
 
@@ -179,8 +280,8 @@
 				pivot3 = new THREE.Group();
 				scene.add( pivot3 );
 				pivot3.add( grup3 );
-				pivot3.position.set(0,0,14);
-				grup3.position.set(0,0,-14);
+				pivot3.position.set(0,0,tpv2);
+				grup3.position.set(0,0,tpv2*-1);
 				listPiv[3]=pivot3;
 				grup4.add(pivot3);
 
@@ -188,33 +289,24 @@
 				pivot1 = new THREE.Group();
 				scene.add( pivot1 );
 				pivot1.add( grup1 );
-				pivot1.position.set(0,0,17);
-				grup1.position.set(0,0,-17);
+				pivot1.position.set(0,0,tpv3);
+				grup1.position.set(0,0,tpv3*-1);
 				listPiv[1]=pivot1;
 				grup2.add(pivot1);
 
 
 				//seteando los limites de movimiento
-				pivot4.ang_ini=Math.PI/6;
-				pivot4.ang_lib=Math.PI/4;
+				pivot4.ang_ini=0;
+				pivot4.ang_lib=Math.PI/8;
 				pivot4.rotation.x=pivot4.ang_ini;
 
-				pivot3.ang_ini=Math.PI/6;
-				pivot3.ang_lib=Math.PI/4;
+				pivot3.ang_ini=Math.PI/2;
+				pivot3.ang_lib=Math.PI/8;
 				pivot3.rotation.x=pivot3.ang_ini;
 
-				pivot1.ang_ini=Math.PI/6;
-				pivot1.ang_lib=Math.PI/4;
+				pivot1.ang_ini=Math.PI/2.25;
+				pivot1.ang_lib=Math.PI/8;
 				pivot1.rotation.x=pivot1.ang_ini;
-
-
-       			
-				
-
-
-
-
-
 
 				drawXYZ(0,0,0);
 				
@@ -225,17 +317,15 @@
 				};
 				animate();
 
-				var rad=0;
+				
+
 				$(document).on("keydown", function(e){
 
 					if(e.keyCode==37){
 						if( listGru[curGru].tip_rot==0 )
 							listGru[curGru].data.rotation.z+=0.1;
 						else{
-							//listGru[curGru].data.rotation.x+=0.1;
-							//listGru[curGru].data.rotation.x+=0.1;
 							listPiv[curGru].rotation.x+=0.1;
-							//fix de posicion segun limites
 							if( (listPiv[curGru].rotation.x-listPiv[curGru].ang_ini)>listPiv[curGru].ang_lib ) 
 								listPiv[curGru].rotation.x=listPiv[curGru].ang_ini+listPiv[curGru].ang_lib;
 
@@ -248,9 +338,6 @@
 							listPiv[curGru].rotation.x-=0.1;
 							if( (listPiv[curGru].ang_ini-listPiv[curGru].rotation.x)>listPiv[curGru].ang_lib ) 
 								listPiv[curGru].rotation.x=listPiv[curGru].ang_ini-listPiv[curGru].ang_lib;
-							//fix de posicion segun limites
-							//listGru[curGru].data.rotation.x-=0.1;
-							//listGru[curGru].data.rotation.x-=0.1;
 						}
 					}
 
@@ -314,11 +401,7 @@
 				});
 
 				$(document).on("click", "#btnAdd", function(){
-					var tmp=listElm[6].data.localToWorld( new THREE.Vector3(0,0,0) );
-					var x=roundn(tmp.x,2);
-					var y=roundn(tmp.y,2);
-					var z=roundn(tmp.z,2);
-					$("#txtCod").val( $("#txtCod").val()+"MOVETO("+x+","+y+","+z+")\n" );
+					addPoint();
 				});
 
 				/*
@@ -334,12 +417,57 @@
 				
 				*/
 
+				
+				
+				
+
+				var recognition = new window.webkitSpeechRecognition();
+				recognition.lang = 'es-ES';
+				//recognition.continuous = true;
+				//recognition.interimResults = true;
+				recognition.onresult=function(e){
+					var rsp=e.results[0][0].transcript
+					var tmp=rsp.split(" ");
+					console.log(tmp);
+					if( tmp[0]=="girar" ){
+						var pos=lstNom[tmp[1]];
+						var ang=parseInt(tmp[3]);
+						var dir=lstDir[tmp[5]];
+						if( tmp.length<6 )
+							dir=lstDir[tmp[4]];
+						//convirtiendo a radianes
+						ang=ang*(Math.PI/180);
+
+						curGru=pos;
+						movAng=ang;
+						movDir=dir;
+						console.log(curGru,movAng,movDir);
+						runRotate();
+					}
+				}
+				$(document).on("click", "#btnVoz", function(){
+					recognition.start();
+				});
+
+				$(document).on("click", "#exeCom", function(){
+					listCom=$("#txtCom").val().split("\n");
+					curCom=0;
+					$("#txtCod").val("");
+					addPoint();
+					runComands();
+				});
+
+
+
+
+
 			});
 		</script>
 	</head>
 	<body>
 		<div style="height: 600px;" class="col-sm-6">
-			<textarea style="height: 100%; resize: none;" id="txtCod" placeholder="Codigo" class="form-control"></textarea>
+			<textarea style="height: 50%; resize: none;" id="txtCod" placeholder="Codigo" class="form-control"></textarea>
+			<textarea style="height: 50%; resize: none;" id="txtCom" placeholder="Comandos" class="form-control"></textarea>
 		</div>
 		<div style="height: 600px;" class="col-sm-6 text-center">
 			<canvas width="500" height="600" id="canvas_render"></canvas>
@@ -352,6 +480,8 @@
 			<button class="btn lstBtn btn-sm" inf="4">Bloque 4</button>
 			<button class="btn lstBtn btn-sm btn-primary curBtn" inf="5">Bloque 5</button>
 			<button id="btnAdd" class="btn btn-sm btn-success">Agregar</button>
+			<button id="btnVoz" class="btn btn-sm btn-success">Voz</button>
+			<button id="exeCom" class="btn btn-sm btn-warning">Ejecutar</button>
 		</div>
 	</body>
 </html>
